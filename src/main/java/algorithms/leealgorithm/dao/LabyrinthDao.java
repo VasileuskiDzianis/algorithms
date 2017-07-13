@@ -22,38 +22,32 @@ public class LabyrinthDao {
 	public Labyrinth getPathTracer() {
 
 		List<String> textScheme;
-		String line;
-
-		int levelsAmount;
-		int rowsAmount;
-		int columnsAmount;
-
-		int startingLevel = 0;
-		int startingRow = 0;
-		int startingColumn = 0;
+		
+		Labyrinth labyrinth = new Labyrinth();
 
 		textScheme = readSchemeFromFile(file);
 
 		// Extract Labyrinths characteristics from 0 line
 		Scanner scanner = new Scanner(textScheme.get(0));
-		levelsAmount = scanner.nextInt();
-		rowsAmount = scanner.nextInt();
-		columnsAmount = scanner.nextInt();
+		labyrinth.setLevelsNum(scanner.nextInt());
+		labyrinth.setRowsNum(scanner.nextInt());
+		labyrinth.setColumnsNum(scanner.nextInt());
 		scanner.close();
 
 		// Create scheme of each level
+		String scheme[][][] = new String[labyrinth.getLevelsNum()][labyrinth.getRowsNum()][labyrinth.getColumnsNum()];
 
-		String scheme[][][] = new String[levelsAmount][rowsAmount][columnsAmount];
-
-		for (int i = 0; i < levelsAmount; i++) {
-			for (int j = 0; j < rowsAmount; j++) {
-				line = textScheme.get(i * (rowsAmount + 1) + 2 + j); // pass 2
-																		// lines
-				for (int k = 0; k < columnsAmount; k++) {
+		for (int i = 0; i < labyrinth.getLevelsNum(); i++) {
+			String line;
+			for (int j = 0; j < labyrinth.getRowsNum(); j++) {
+				line = textScheme.get(i * (labyrinth.getRowsNum() + 1) + 2 + j); // pass
+																					// 2
+				// lines
+				for (int k = 0; k < labyrinth.getColumnsNum(); k++) {
 					if (line.charAt(k) == '1') {
-						startingColumn = k;
-						startingRow = j;
-						startingLevel = i;
+						labyrinth.setStartingColumn(k);
+						labyrinth.setStartingRow(j);
+						labyrinth.setStartingLevel(i);
 						scheme[i][j][k] = "s"; // we use s - start because we
 												// are going to use "Lee
 												// Algorithm"
@@ -66,15 +60,7 @@ public class LabyrinthDao {
 			}
 		}
 
-		Labyrinth labyrinth = new Labyrinth();
-
 		labyrinth.setScheme(scheme);
-		labyrinth.setStartingLevel(startingLevel);
-		labyrinth.setStartingRow(startingRow);
-		labyrinth.setStartingColumn(startingColumn);
-		labyrinth.setLevelsNum(levelsAmount);
-		labyrinth.setRowsNum(rowsAmount);
-		labyrinth.setColumnsNum(columnsAmount);
 
 		return labyrinth;
 	}
@@ -82,16 +68,16 @@ public class LabyrinthDao {
 	private List<String> readSchemeFromFile(File file) {
 		List<String> linesFromFile = new ArrayList<String>();
 		String oneLineFromFile;
-		BufferedReader fin = null;
+		BufferedReader bufferedReader = null;
 
 		try {
-			fin = new BufferedReader(new FileReader(file));
+			bufferedReader = new BufferedReader(new FileReader(file));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 
 		try {
-			while ((oneLineFromFile = fin.readLine()) != null) {
+			while ((oneLineFromFile = bufferedReader.readLine()) != null) {
 				linesFromFile.add(oneLineFromFile);
 			}
 		} catch (IOException e) {
