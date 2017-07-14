@@ -15,7 +15,7 @@ public class PathTracerServiceRunner{
 		
 		princeDao.setFile(file);
 		
-		Labyrinth labyrinth = princeDao.getPathTracer();
+		Labyrinth labyrinth = princeDao.getLabyrinth();
 		PathTracerService pathFinder = new PathTracerService();
 		
 		String[][][] labyrinthBeforeTrace = labyrinth.getScheme();
@@ -38,7 +38,7 @@ public class PathTracerServiceRunner{
 		
 		List<int[]> path = pathFinder.getShortestPath(labyrinth);
 		
-		labyrinthBeforeTrace = princeDao.getPathTracer().getScheme(); //we get original labyrinth without traced waves
+		labyrinthBeforeTrace = princeDao.getLabyrinth().getScheme(); //we get original labyrinth without traced waves
 		
 		if (path != null) {
 			

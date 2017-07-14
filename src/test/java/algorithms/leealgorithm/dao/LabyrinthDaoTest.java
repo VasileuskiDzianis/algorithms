@@ -16,7 +16,7 @@ public class LabyrinthDaoTest {
 	public void testGetPrinceOfPercia() {
 		File file = new File("src/test/resources/labyrinth_dao_test.txt");
 		prince.setFile(file);
-		Labyrinth labyrinth = prince.getPathTracer();
+		Labyrinth labyrinth = prince.getLabyrinth();
 		String[][][] etalonLab = {
 				{{".","o",".","."},
 				 {".",".",".","o"},
@@ -33,11 +33,11 @@ public class LabyrinthDaoTest {
 			for (int j=0; j<labFromDao[i].length; j++){
 				for (int k=0; k<labFromDao[i][j].length; k++){
 					assertEquals(etalonLab[i][j][k],labFromDao[i][j][k]);
-					System.out.print(labFromDao[i][j][k]);
+					//System.out.print(labFromDao[i][j][k]);
 				}
-				System.out.println();
+				//System.out.println();
 			}
-			System.out.println();
+			//System.out.println();
 		}
 
 	}
