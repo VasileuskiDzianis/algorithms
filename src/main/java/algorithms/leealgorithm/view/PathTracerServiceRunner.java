@@ -7,12 +7,14 @@ import algorithms.leealgorithm.dao.LabyrinthDao;
 import algorithms.leealgorithm.domain.Labyrinth;
 import algorithms.leealgorithm.service.PathTracerService;
 
-public class TracingExample{
+public class PathTracerServiceRunner{
 
 	public static void main(String[] args) {
 		LabyrinthDao princeDao = new LabyrinthDao();
-		File file = new File("labyrinth.txt");//put your labyrinth into project's root directory and set here it name
+		File file = new File("src/main/resources/labyrinth.txt");//put your labyrinth into project's root directory and set here it name
+		
 		princeDao.setFile(file);
+		
 		Labyrinth labyrinth = princeDao.getPathTracer();
 		PathTracerService pathFinder = new PathTracerService();
 		

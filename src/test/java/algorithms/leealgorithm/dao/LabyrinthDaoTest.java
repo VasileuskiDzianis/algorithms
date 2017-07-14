@@ -14,7 +14,7 @@ public class LabyrinthDaoTest {
 
 	@Test
 	public void testGetPrinceOfPercia() {
-		File file = new File("labyrinth_dao_test.txt");
+		File file = new File("src/test/resources/labyrinth_dao_test.txt");
 		prince.setFile(file);
 		Labyrinth labyrinth = prince.getPathTracer();
 		String[][][] etalonLab = {
