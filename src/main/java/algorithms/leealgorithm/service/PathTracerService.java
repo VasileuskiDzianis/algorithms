@@ -17,222 +17,165 @@ import algorithms.leealgorithm.domain.Labyrinth;
  */
 
 public class PathTracerService {
-	private String[][][] operatingLab;
+	private String[][][] scheme;
 
 	public List<int[]> getShortestPath(Labyrinth labyrinth) {
 
 		List<int[]> wave = new ArrayList<int[]>(); // we will store here wave's
 													// nodes
-		operatingLab = labyrinth.getScheme();
+		scheme = labyrinth.getScheme();
 		boolean success = false;
 		int waveCounter = 0;
 
 		wave.add(new int[] { labyrinth.getStartingLevel(), labyrinth.getStartingRow(), labyrinth.getStartingColumn() });
 
-		int[] finishCoordinates = new int[3]; // princess coordinates
-
-		List<int[]> shortestPath = null;
+		int[] finishPointCoordinates = new int[3];
 
 		do {
-			List<int[]> waveTemp = new ArrayList<int[]>();
+			List<int[]> waveFrontCoordinates = new ArrayList<int[]>();
 			for (int[] node : wave) {
 
 				// trying to build node on the next level
-				if (node[0] < (labyrinth.getLevelsNum() - 1) && // check
-																// existence of
-																// the next
-																// level
-						(operatingLab[(node[0] + 1)][node[1]][node[2]].equals("."))) {// check
-																						// possibility
-																						// to
-																						// move
-																						// to
-																						// the
-																						// next
-																						// level
+				if (isAdjacentCellExist(scheme, node, 1, 0, 0) && isPossibleToMoveAdjacentCell(scheme, node, 1, 0, 0)) {
 
 					// add coordinates of a new node into a wave
-					waveTemp.add(new int[] { (node[0] + 1), node[1], node[2] });
+					waveFrontCoordinates.add(new int[] { (node[0] + 1), node[1], node[2] });
 
 					// set into labyrinth's node value of waveCounter
-					operatingLab[(node[0] + 1)][node[1]][node[2]] = String.valueOf(waveCounter);
-				} else if (node[0] < (labyrinth.getLevelsNum() - 1)
-						&& (operatingLab[(node[0] + 1)][node[1]][node[2]].equals("f"))) {
+					scheme[(node[0] + 1)][node[1]][node[2]] = String.valueOf(waveCounter);
+				} else if (isAdjacentCellExist(scheme, node, 1, 0, 0) && isFinishPoint(scheme, node, 1, 0, 0)) {
 
-					// we found a princess
+					// we found the finish point
 					success = true;
-					finishCoordinates[0] = (node[0] + 1);
-					finishCoordinates[1] = (node[1]);
-					finishCoordinates[2] = (node[2]);
+					finishPointCoordinates[0] = (node[0] + 1);
+					finishPointCoordinates[1] = (node[1]);
+					finishPointCoordinates[2] = (node[2]);
 					break;
 				}
 
 				// trying to build node on the left
-				if ((node[2] > 0) && // check existence of a cell from the left
-						(operatingLab[node[0]][node[1]][(node[2] - 1)].equals("."))) {// check
-																						// possibility
-																						// to
-																						// make
-																						// one
-																						// step
-																						// to
-																						// the
-																						// left
+				if (isAdjacentCellExist(scheme, node, 0, 0, -1)
+						&& isPossibleToMoveAdjacentCell(scheme, node, 0, 0, -1)) {
 
 					// add coordinates of a new node into a wave
-					waveTemp.add(new int[] { node[0], node[1], (node[2] - 1) });
+					waveFrontCoordinates.add(new int[] { node[0], node[1], (node[2] - 1) });
 
 					// set into labyrinth's node value of waveCounter
-					operatingLab[node[0]][node[1]][(node[2] - 1)] = String.valueOf(waveCounter);
-				} else if ((node[2] > 0) && (operatingLab[node[0]][node[1]][(node[2] - 1)].equals("f"))) {
+					scheme[node[0]][node[1]][(node[2] - 1)] = String.valueOf(waveCounter);
+				} else if (isAdjacentCellExist(scheme, node, 0, 0, -1) && isFinishPoint(scheme, node, 0, 0, -1)) {
 
-					// we found a finish point
+					// we found the finish point
 					success = true;
-					finishCoordinates[0] = (node[0]);
-					finishCoordinates[1] = (node[1]);
-					finishCoordinates[2] = (node[2] - 1);
+					finishPointCoordinates[0] = (node[0]);
+					finishPointCoordinates[1] = (node[1]);
+					finishPointCoordinates[2] = (node[2] - 1);
 					break;
 				}
 
 				// trying to build node above
-				if ((node[1] > 0) && // check existence of a cell above
-						(operatingLab[node[0]][(node[1] - 1)][node[2]].equals("."))) {// check
-																						// possibility
-																						// to
-																						// make
-																						// one
-																						// step
-																						// up
+				if (isAdjacentCellExist(scheme, node, 0, -1, 0)
+						&& isPossibleToMoveAdjacentCell(scheme, node, 0, -1, 0)) {
 
 					// add coordinates of a new node into a wave
-					waveTemp.add(new int[] { node[0], (node[1] - 1), node[2] });
+					waveFrontCoordinates.add(new int[] { node[0], (node[1] - 1), node[2] });
 
 					// set into labyrinth's node value of waveCounter
-					operatingLab[node[0]][(node[1] - 1)][node[2]] = String.valueOf(waveCounter);
-				} else if ((node[1] > 0) && (operatingLab[node[0]][(node[1] - 1)][node[2]].equals("f"))) {
+					scheme[node[0]][(node[1] - 1)][node[2]] = String.valueOf(waveCounter);
+				} else if (isAdjacentCellExist(scheme, node, 0, -1, 0) && isFinishPoint(scheme, node, 0, -1, 0)) {
 
-					// we found a finish point
+					// we found the finish point
 					success = true;
-					finishCoordinates[0] = (node[0]);
-					finishCoordinates[1] = (node[1] - 1);
-					finishCoordinates[2] = (node[2]);
+					finishPointCoordinates[0] = (node[0]);
+					finishPointCoordinates[1] = (node[1] - 1);
+					finishPointCoordinates[2] = (node[2]);
 					break;
 				}
 
 				// trying to build node on the right
-				if ((node[2] < (labyrinth.getColumnsNum() - 1)) && // check
-																	// existence
-																	// of a cell
-																	// from the
-																	// right
-						(operatingLab[node[0]][node[1]][(node[2] + 1)].equals("."))) {// check
-																						// possibility
-																						// to
-																						// make
-																						// one
-																						// step
-																						// to
-																						// the
-																						// right
+				if ((isAdjacentCellExist(scheme, node, 0, 0, 1))
+						&& isPossibleToMoveAdjacentCell(scheme, node, 0, 0, 1)) {
 
 					// add coordinates of a new node into a wave
-					waveTemp.add(new int[] { node[0], node[1], (node[2] + 1) });
+					waveFrontCoordinates.add(new int[] { node[0], node[1], (node[2] + 1) });
 
 					// set into labyrinth's node value of waveCounter
-					operatingLab[node[0]][node[1]][(node[2] + 1)] = String.valueOf(waveCounter);
-				} else if ((node[2] < (labyrinth.getColumnsNum() - 1))
-						&& (operatingLab[node[0]][node[1]][(node[2] + 1)].equals("f"))) {
+					scheme[node[0]][node[1]][(node[2] + 1)] = String.valueOf(waveCounter);
+				} else if ((isAdjacentCellExist(scheme, node, 0, 0, 1)) && isFinishPoint(scheme, node, 0, 0, 1)) {
 
-					// we found a princess
+					// we found the finish point
 					success = true;
-					finishCoordinates[0] = (node[0]);
-					finishCoordinates[1] = (node[1]);
-					finishCoordinates[2] = (node[2] + 1);
+					finishPointCoordinates[0] = (node[0]);
+					finishPointCoordinates[1] = (node[1]);
+					finishPointCoordinates[2] = (node[2] + 1);
 					break;
 				}
 
 				// trying to build node under
-				if ((node[1] < (labyrinth.getRowsNum() - 1)) && // check
-																// existence of
-																// a cell under
-						(operatingLab[node[0]][(node[1] + 1)][node[2]].equals("."))) {// check
-																						// possibility
-																						// to
-																						// make
-																						// one
-																						// step
-																						// down
+				if ((isAdjacentCellExist(scheme, node, 0, 1, 0))
+						&& isPossibleToMoveAdjacentCell(scheme, node, 0, 1, 0)) {
 
 					// add coordinates of a new node into a wave
-					waveTemp.add(new int[] { node[0], (node[1] + 1), node[2] });
+					waveFrontCoordinates.add(new int[] { node[0], (node[1] + 1), node[2] });
 
 					// set into labyrinth's node value of waveCounter
-					operatingLab[node[0]][(node[1] + 1)][node[2]] = String.valueOf(waveCounter);
-				} else if ((node[1] < (labyrinth.getRowsNum() - 1))
-						&& (operatingLab[node[0]][(node[1] + 1)][node[2]].equals("f"))) {
+					scheme[node[0]][(node[1] + 1)][node[2]] = String.valueOf(waveCounter);
+				} else if ((isAdjacentCellExist(scheme, node, 0, 1, 0)) && isFinishPoint(scheme, node, 0, 1, 0)) {
 
-					// we found a princess
+					// we found the finish point
 					success = true;
-					finishCoordinates[0] = (node[0]);
-					finishCoordinates[1] = (node[1] + 1);
-					finishCoordinates[2] = (node[2]);
+					finishPointCoordinates[0] = (node[0]);
+					finishPointCoordinates[1] = (node[1] + 1);
+					finishPointCoordinates[2] = (node[2]);
 					break;
 				}
-
 			}
 			waveCounter++;
-			wave = waveTemp;
+			wave = waveFrontCoordinates;
 		} while (!success && wave.size() != 0);
 
-		// build path from princess to prince
-		if (success) {
-			waveCounter = waveCounter - 2; // we get number of wave in adjacent cell
-			shortestPath = new ArrayList<int[]>();
-			for (int i = 0; i <= (waveCounter); i++) {
+		// build path from finish point to start point
+		List<int[]> shortestPath = null;
 
-				// check upper level
-				if (finishCoordinates[0] > 0
-						&& operatingLab[finishCoordinates[0] - 1][finishCoordinates[1]][finishCoordinates[2]]
-								.equals(String.valueOf(waveCounter - i))) {
-					shortestPath
-							.add(new int[] { (finishCoordinates[0] - 1), finishCoordinates[1], finishCoordinates[2] });
-					finishCoordinates[0]--;
+		waveCounter = waveCounter - 2; // we get number of wave in adjacent cell
+		shortestPath = new ArrayList<int[]>();
+		for (int i = 0; i <= (waveCounter); i++) {
 
-					// check from the left
-				} else if (finishCoordinates[2] > 0
-						&& operatingLab[finishCoordinates[0]][finishCoordinates[1]][finishCoordinates[2] - 1]
-								.equals(String.valueOf(waveCounter - i))) {
-					shortestPath
-							.add(new int[] { finishCoordinates[0], finishCoordinates[1], finishCoordinates[2] - 1 });
-					finishCoordinates[2]--;
-					
-					// check from the right
-				} else if (finishCoordinates[2] < (labyrinth.getColumnsNum() - 1)
-						&& operatingLab[finishCoordinates[0]][finishCoordinates[1]][finishCoordinates[2] + 1]
-								.equals(String.valueOf(waveCounter - i))) {
-					shortestPath
-							.add(new int[] { finishCoordinates[0], finishCoordinates[1], finishCoordinates[2] + 1 });
-					finishCoordinates[2]++;
+			// check upper level
+			if (finishPointCoordinates[0] > 0
+					&& isNextStepOfWave(scheme, finishPointCoordinates, waveCounter, i, -1, 0, 0)) {
+				shortestPath.add(new int[] { (finishPointCoordinates[0] - 1), finishPointCoordinates[1],
+						finishPointCoordinates[2] });
+				finishPointCoordinates[0]--;
 
-					// check above
-				} else if (finishCoordinates[1] > 0
-						&& operatingLab[finishCoordinates[0]][finishCoordinates[1] - 1][finishCoordinates[2]]
-								.equals(String.valueOf(waveCounter - i))) {
-					shortestPath
-							.add(new int[] { finishCoordinates[0], finishCoordinates[1] - 1, finishCoordinates[2] });
-					finishCoordinates[1]--;
-				}
-				
-				// check under
-				if (finishCoordinates[1] < (labyrinth.getRowsNum() - 1)
-						&& operatingLab[finishCoordinates[0]][finishCoordinates[1] + 1][finishCoordinates[2]]
-								.equals(String.valueOf(waveCounter - i))) {
-					shortestPath
-							.add(new int[] { finishCoordinates[0], finishCoordinates[1] + 1, finishCoordinates[2] });
-					finishCoordinates[1]++;
-				}
+				// check from the left
+			} else if (finishPointCoordinates[2] > 0
+					&& isNextStepOfWave(scheme, finishPointCoordinates, waveCounter, i, 0, 0, -1)) {
+				shortestPath.add(new int[] { finishPointCoordinates[0], finishPointCoordinates[1],
+						finishPointCoordinates[2] - 1 });
+				finishPointCoordinates[2]--;
+
+				// check from the right
+			} else if (finishPointCoordinates[2] < (labyrinth.getColumnsNum() - 1)
+					&& isNextStepOfWave(scheme, finishPointCoordinates, waveCounter, i, 0, 0, 1)) {
+				shortestPath.add(new int[] { finishPointCoordinates[0], finishPointCoordinates[1],
+						finishPointCoordinates[2] + 1 });
+				finishPointCoordinates[2]++;
+
+				// check above
+			} else if (finishPointCoordinates[1] > 0
+					&& isNextStepOfWave(scheme, finishPointCoordinates, waveCounter, i, 0, -1, 0)) {
+				shortestPath.add(new int[] { finishPointCoordinates[0], finishPointCoordinates[1] - 1,
+						finishPointCoordinates[2] });
+				finishPointCoordinates[1]--;
 			}
 
+			// check under
+			if (finishPointCoordinates[1] < (labyrinth.getRowsNum() - 1)
+					&& isNextStepOfWave(scheme, finishPointCoordinates, waveCounter, i, 0, 1, 0)) {
+				shortestPath.add(new int[] { finishPointCoordinates[0], finishPointCoordinates[1] + 1,
+						finishPointCoordinates[2] });
+				finishPointCoordinates[1]++;
+			}
 		}
 
 		return shortestPath;
@@ -240,7 +183,36 @@ public class PathTracerService {
 
 	public String[][][] getTraceMap() {
 
-		return operatingLab;
+		return scheme;
 	}
 
+	private boolean isPossibleToMoveAdjacentCell(String[][][] scheme, int[] node, int levelOffset, int rowOffset,
+			int columnOffset) {
+
+		return (scheme[node[0] + levelOffset][node[1] + rowOffset][node[2] + columnOffset].equals("."));
+	}
+
+	private boolean isFinishPoint(String[][][] scheme, int[] node, int levelOffset, int rowOffset, int columnOffset) {
+
+		return (scheme[node[0] + levelOffset][node[1] + rowOffset][node[2] + columnOffset].equals("f"));
+	}
+
+	private boolean isNextStepOfWave(String[][][] scheme, int finishPointCoordinates[], int waveCounter, int counter,
+			int levelOffset, int rowOffset, int columnOffset) {
+
+		return scheme[finishPointCoordinates[0] + levelOffset][finishPointCoordinates[1]
+				+ rowOffset][finishPointCoordinates[2] + columnOffset].equals(String.valueOf(waveCounter - counter));
+	}
+
+	private boolean isAdjacentCellExist(String[][][] scheme, int[] node, int levelOffset, int rowOffset,
+			int columnOffset) {
+		try {
+			scheme[node[0] + levelOffset][node[1] + rowOffset][node[2] + columnOffset].hashCode();
+
+		} catch (IndexOutOfBoundsException e) {
+			return false;
+		}
+
+		return true;
+	}
 }
