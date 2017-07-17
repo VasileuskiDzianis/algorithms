@@ -42,14 +42,14 @@ public class PathTracerService {
 			List<int[]> waveFrontPoints = new ArrayList<int[]>();
 			for (int[] node : previousWavePoints) {
 				for (int[] offset : OFFSETS) {
-					if (isAdjacentCellExist(scheme, node, offset)
-							&& isPossibleToMoveAdjacentCell(scheme, node, offset)) {
+					if (isAdjacentPointExist(scheme, node, offset)
+							&& isPossibleToMoveAdjacentPoint(scheme, node, offset)) {
 
 						waveFrontPoints.add(getAdjacentPoint(node, offset));
 						setValueOfWaveCounter(scheme, node, offset, waveCounter);
-					} else if (isAdjacentCellExist(scheme, node, offset) && isFinishPoint(scheme, node, offset)) {
+					} else if (isAdjacentPointExist(scheme, node, offset) && isFinishPoint(scheme, node, offset)) {
 
-						return buildShortestPath(waveCounter, getFinishPoint(node, offset), labyrinth);
+						return buildShortestPath(waveCounter, getAdjacentPoint(node, offset), labyrinth);
 					}
 				}
 			}
@@ -61,11 +61,6 @@ public class PathTracerService {
 		return null;
 	}
 
-	private void setValueOfWaveCounter(String[][][] scheme, int[] node, int[] offset, int counter) {
-
-		scheme[node[0] + offset[0]][node[1] + offset[1]][(node[2] + offset[2])] = String.valueOf(counter);
-	}
-
 	private List<int[]> buildShortestPath(int waveCounter, int[] finishPoint, Labyrinth labyrinth) {
 		int counter = waveCounter - 1; // we get number of wave in adjacent cell
 		List<int[]> shortestPath = new ArrayList<int[]>();
@@ -73,7 +68,7 @@ public class PathTracerService {
 
 		for (int i = 0; i <= (counter); i++) {
 			for (int[] offset : OFFSETS) {
-				if (isAdjacentCellExist(labyrinth.getScheme(), currentPoint, offset)
+				if (isAdjacentPointExist(labyrinth.getScheme(), currentPoint, offset)
 						&& isNextStepOfWave(labyrinth.getScheme(), currentPoint, counter, i, offset)) {
 
 					addNewPointToPath(shortestPath, currentPoint, offset);
@@ -86,12 +81,17 @@ public class PathTracerService {
 		return shortestPath;
 	}
 
+	private void setValueOfWaveCounter(String[][][] scheme, int[] node, int[] offset, int counter) {
+
+		scheme[node[0] + offset[0]][node[1] + offset[1]][(node[2] + offset[2])] = String.valueOf(counter);
+	}
+	
 	private int[] getAdjacentPoint(int[] currentPoint, int[] offset) {
 
 		return new int[] { currentPoint[0] + offset[0], currentPoint[1] + offset[1], currentPoint[2] + offset[2] };
 	}
 
-	private boolean isPossibleToMoveAdjacentCell(String[][][] scheme, int[] node, int[] offset) {
+	private boolean isPossibleToMoveAdjacentPoint(String[][][] scheme, int[] node, int[] offset) {
 
 		return (scheme[node[0] + offset[0]][node[1] + offset[1]][node[2] + offset[2]].equals("."));
 	}
@@ -108,7 +108,7 @@ public class PathTracerService {
 				+ offset[1]][finishPointCoordinates[2] + offset[2]].equals(String.valueOf(waveCounter - counter));
 	}
 
-	private boolean isAdjacentCellExist(String[][][] scheme, int[] node, int[] offset) {
+	private boolean isAdjacentPointExist(String[][][] scheme, int[] node, int[] offset) {
 		
 		if ((node[0] + offset[0]) < 0 || (node[0] + offset[0]) > scheme.length - 1) {
 			
@@ -126,12 +126,6 @@ public class PathTracerService {
 		}
 		
 		return true;
-	}
-
-	private int[] getFinishPoint(int[] node, int[] offset) {
-		int[] finishPoint = { node[0] + offset[0], node[1] + offset[1], node[2] + offset[2] };
-
-		return finishPoint;
 	}
 
 	private void addNewPointToPath(List<int[]> path, int[] point, int[] offset) {
