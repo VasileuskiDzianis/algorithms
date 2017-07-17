@@ -16,7 +16,6 @@ import algorithms.leealgorithm.domain.Labyrinth;
  * - too long methods - fixed (extract method)
  * - break operator in cycles
  * - bad name waveTemp - fixed
- * - getShortestPath () modifies original Labyrinth scheme
  */
 
 public class PathTracerService {
@@ -57,6 +56,7 @@ public class PathTracerService {
 			}
 			waveCounter++;
 			previousWavePoints = waveFrontPoints;
+			
 		} while (previousWavePoints.size() != 0);
 
 		return null;
@@ -110,13 +110,22 @@ public class PathTracerService {
 	}
 
 	private boolean isAdjacentCellExist(String[][][] scheme, int[] node, int[] offset) {
-		try {
-			scheme[node[0] + offset[0]][node[1] + offset[1]][node[2] + offset[2]].hashCode();
-
-		} catch (IndexOutOfBoundsException e) {
+		
+		if ((node[0] + offset[0]) < 0 || (node[0] + offset[0]) > scheme.length - 1) {
+			
+			return false;
+		}
+		
+		if ((node[1] + offset[1]) < 0 || (node[1] + offset[1]) > scheme[0].length - 1) {
 
 			return false;
 		}
+		
+		if ((node[2] + offset[2]) < 0 || (node[2] + offset[2]) > scheme[0][0].length - 1) {
+
+			return false;
+		}
+		
 		return true;
 	}
 
