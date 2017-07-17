@@ -13,8 +13,8 @@ import algorithms.leealgorithm.service.PathTracerService;
 public class PathTracerServiceTest {
 
 	
-	Labyrinth prince;
-	Labyrinth prince2;
+	Labyrinth labyrinth1;
+	Labyrinth labyrinth2;
 	
 	String[][][] etalonLab = {
 			{{".","o",".","."},
@@ -54,23 +54,23 @@ public class PathTracerServiceTest {
 	};
 	@Before
 	public void initialize(){
-		prince = new Labyrinth();
-		prince.setScheme(etalonLab);
-		prince.setColumnsNum(4);
-		prince.setRowsNum(4);
-		prince.setLevelsNum(2);
-		prince.setStartingLevel(0);
-		prince.setStartingRow(2);
-		prince.setStartingColumn(3);
+		labyrinth1 = new Labyrinth();
+		labyrinth1.setScheme(etalonLab);
+		labyrinth1.setColumnsNum(4);
+		labyrinth1.setRowsNum(4);
+		labyrinth1.setLevelsNum(2);
+		labyrinth1.setStartingLevel(0);
+		labyrinth1.setStartingRow(2);
+		labyrinth1.setStartingColumn(3);
 		
-		prince2 = new Labyrinth();
-		prince2.setScheme(labyrinthFromTask);
-		prince2.setColumnsNum(3);
-		prince2.setRowsNum(3);
-		prince2.setLevelsNum(3);
-		prince2.setStartingLevel(0);
-		prince2.setStartingRow(0);
-		prince2.setStartingColumn(0);
+		labyrinth2 = new Labyrinth();
+		labyrinth2.setScheme(labyrinthFromTask);
+		labyrinth2.setColumnsNum(3);
+		labyrinth2.setRowsNum(3);
+		labyrinth2.setLevelsNum(3);
+		labyrinth2.setStartingLevel(0);
+		labyrinth2.setStartingRow(0);
+		labyrinth2.setStartingColumn(0);
 		
 		
 	}
@@ -80,8 +80,8 @@ public class PathTracerServiceTest {
 	public void testGetShortestPath() {
 		PathTracerService pathFinder = new PathTracerService();
 		List<int[]> path;
-		path = pathFinder.getShortestPath(prince);
-		String[][][] tracedMap = pathFinder.getTraceMap();
+		path = pathFinder.getShortestPath(labyrinth1);
+		String[][][] tracedMap = labyrinth1.getScheme();
 		System.out.println("Traced map:");
 		for (int i=0; i<tracedMap.length; i++){
 			for (int j=0; j<tracedMap[i].length; j++){
@@ -114,7 +114,7 @@ public class PathTracerServiceTest {
 	public void testGetShortestPathInTaskLabyrinth(){
 		PathTracerService pathFinder = new PathTracerService();
 		List<int[]> path;
-		path = pathFinder.getShortestPath(prince2);
+		path = pathFinder.getShortestPath(labyrinth2);
 		assertEquals(12,path.size()+1);
 	}
 

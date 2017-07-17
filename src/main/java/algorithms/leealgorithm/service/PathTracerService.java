@@ -29,13 +29,12 @@ public class PathTracerService {
 	private static final Set<int[]> OFFSETS = new HashSet<int[]>(
 			Arrays.asList(OFFSET_Z_DOWN, OFFSET_Z_UP, OFFSET_X_LEFT, OFFSET_X_RIGHT, OFFSET_Y_UP, OFFSET_Y_DOWN));
 
-	private String[][][] scheme;
-
 	public List<int[]> getShortestPath(Labyrinth labyrinth) {
 		List<int[]> previousWavePoints = new ArrayList<int[]>();
-		scheme = labyrinth.getScheme();
 		int waveCounter = 0;
 
+		String[][][] scheme = labyrinth.getScheme();
+		
 		previousWavePoints.add(
 				new int[] { labyrinth.getStartingLevel(), labyrinth.getStartingRow(), labyrinth.getStartingColumn() });
 
@@ -133,11 +132,6 @@ public class PathTracerService {
 		int[] finishPoint = { node[0] + offset[0], node[1] + offset[1], node[2] + offset[2] };
 
 		return finishPoint;
-	}
-
-	public String[][][] getTraceMap() {
-
-		return scheme;
 	}
 
 	private void addNewPointToPath(List<int[]> path, int[] point, int[] offset) {
