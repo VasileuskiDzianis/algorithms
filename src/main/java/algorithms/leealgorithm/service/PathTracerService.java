@@ -11,9 +11,9 @@ import algorithms.leealgorithm.domain.Labyrinth;
 /*
  * Dirty version of Lee Algorithm implementation in procedure-style.
  * For refactoring:
- * - unreadable conditions
+ * - unreadable conditions - fixed (extract method)
  * - wasn't used OOP
- * - too long methods
+ * - too long methods - fixed (extract method)
  * - break operator in cycles
  * - bad name waveTemp - fixed
  * - getShortestPath () modifies original Labyrinth scheme
@@ -33,20 +33,16 @@ public class PathTracerService {
 	private String[][][] scheme;
 
 	public List<int[]> getShortestPath(Labyrinth labyrinth) {
-
-		List<int[]> wave = new ArrayList<int[]>();
+		List<int[]> previousWavePoints = new ArrayList<int[]>();
 		scheme = labyrinth.getScheme();
-		boolean finishPointWasFound = false;
 		int waveCounter = 0;
 
-		wave.add(new int[] { labyrinth.getStartingLevel(), labyrinth.getStartingRow(), labyrinth.getStartingColumn() });
-
-		int[] finishPoint = new int[3];
+		previousWavePoints.add(
+				new int[] { labyrinth.getStartingLevel(), labyrinth.getStartingRow(), labyrinth.getStartingColumn() });
 
 		do {
 			List<int[]> waveFrontPoints = new ArrayList<int[]>();
-			for (int[] node : wave) {
-
+			for (int[] node : previousWavePoints) {
 				for (int[] offset : OFFSETS) {
 					if (isAdjacentCellExist(scheme, node, offset)
 							&& isPossibleToMoveAdjacentCell(scheme, node, offset)) {
@@ -55,19 +51,13 @@ public class PathTracerService {
 						setValueOfWaveCounter(scheme, node, offset, waveCounter);
 					} else if (isAdjacentCellExist(scheme, node, offset) && isFinishPoint(scheme, node, offset)) {
 
-						finishPointWasFound = true;
-
-						finishPoint = getFinishPoint(node, offset);
-
-						return buildShortestPath(waveCounter, finishPoint, labyrinth);
+						return buildShortestPath(waveCounter, getFinishPoint(node, offset), labyrinth);
 					}
-
 				}
-
 			}
 			waveCounter++;
-			wave = waveFrontPoints;
-		} while (!finishPointWasFound && wave.size() != 0);
+			previousWavePoints = waveFrontPoints;
+		} while (previousWavePoints.size() != 0);
 
 		return null;
 	}
@@ -83,25 +73,24 @@ public class PathTracerService {
 		int[] currentPoint = Arrays.copyOf(finishPoint, finishPoint.length);
 
 		for (int i = 0; i <= (counter); i++) {
-
 			for (int[] offset : OFFSETS) {
 				if (isAdjacentCellExist(labyrinth.getScheme(), currentPoint, offset)
 						&& isNextStepOfWave(labyrinth.getScheme(), currentPoint, counter, i, offset)) {
+
 					addNewPointToPath(shortestPath, currentPoint, offset);
 					currentPoint = getAdjacentPoint(currentPoint, offset);
+
 					break;
 				}
 			}
-
 		}
-
 		return shortestPath;
 	}
 
 	private int[] getAdjacentPoint(int[] currentPoint, int[] offset) {
-		
-		return new int[] {currentPoint[0] + offset[0], currentPoint[1] + offset[1], currentPoint[2] + offset[2]};
-	} 
+
+		return new int[] { currentPoint[0] + offset[0], currentPoint[1] + offset[1], currentPoint[2] + offset[2] };
+	}
 
 	private boolean isPossibleToMoveAdjacentCell(String[][][] scheme, int[] node, int[] offset) {
 
@@ -125,9 +114,9 @@ public class PathTracerService {
 			scheme[node[0] + offset[0]][node[1] + offset[1]][node[2] + offset[2]].hashCode();
 
 		} catch (IndexOutOfBoundsException e) {
+
 			return false;
 		}
-
 		return true;
 	}
 
