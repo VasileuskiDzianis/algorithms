@@ -28,29 +28,32 @@ public class PathTracerService {
 
 	private static final Set<int[]> OFFSETS = new HashSet<int[]>(
 			Arrays.asList(OFFSET_Z_DOWN, OFFSET_Z_UP, OFFSET_X_LEFT, OFFSET_X_RIGHT, OFFSET_Y_UP, OFFSET_Y_DOWN));
+	
+	private LabyrinthService labyrinthService = new LabyrinthServiceImpl();
 
 	public List<int[]> getShortestPath(Labyrinth labyrinth) {
 		List<int[]> previousWavePoints = new ArrayList<int[]>();
 		int waveCounter = 0;
-
-		String[][][] scheme = labyrinth.getScheme();
 		
+		labyrinthService.setLabyrinth(labyrinth);
+
 		previousWavePoints.add(
 				new int[] { labyrinth.getStartingLevel(), labyrinth.getStartingRow(), labyrinth.getStartingColumn() });
 
 		do {
 			List<int[]> waveFrontPoints = new ArrayList<int[]>();
-			for (int[] node : previousWavePoints) {
+			for (int[] currentPoint : previousWavePoints) {
 				for (int[] offset : OFFSETS) {
-					if (isAdjacentPointExist(scheme, node, offset)
-							&& isPossibleToMoveAdjacentPoint(scheme, node, offset)) {
+					
+					if (labyrinthService.isFinishPoint(currentPoint, offset)) {
 
-						waveFrontPoints.add(getAdjacentPoint(node, offset));
-						setValueOfWaveCounter(scheme, node, offset, waveCounter);
-					} else if (isAdjacentPointExist(scheme, node, offset) && isFinishPoint(scheme, node, offset)) {
-
-						return buildShortestPath(waveCounter, getAdjacentPoint(node, offset), labyrinth);
+						return buildShortestPath(waveCounter, getAdjacentPoint(currentPoint, offset), labyrinth);
 					}
+					if (labyrinthService.isPossibleToMoveAdjacentPoint(currentPoint, offset)) {
+
+						waveFrontPoints.add(getAdjacentPoint(currentPoint, offset));
+						setValueOfWaveCounterToScheme(labyrinth, currentPoint, offset, waveCounter);
+					} 
 				}
 			}
 			waveCounter++;
@@ -68,12 +71,12 @@ public class PathTracerService {
 
 		for (int i = 0; i <= (counter); i++) {
 			for (int[] offset : OFFSETS) {
-				if (isAdjacentPointExist(labyrinth.getScheme(), currentPoint, offset)
+				if (labyrinthService.isAdjacentPointExist(currentPoint, offset)
 						&& isNextStepOfWave(labyrinth.getScheme(), currentPoint, counter, i, offset)) {
 
 					addNewPointToPath(shortestPath, currentPoint, offset);
 					currentPoint = getAdjacentPoint(currentPoint, offset);
-
+					
 					break;
 				}
 			}
@@ -81,9 +84,9 @@ public class PathTracerService {
 		return shortestPath;
 	}
 
-	private void setValueOfWaveCounter(String[][][] scheme, int[] node, int[] offset, int counter) {
+	private void setValueOfWaveCounterToScheme(Labyrinth labyrinth, int[] point, int[] offset, int counter) {
 
-		scheme[node[0] + offset[0]][node[1] + offset[1]][(node[2] + offset[2])] = String.valueOf(counter);
+		labyrinth.getScheme()[point[0] + offset[0]][point[1] + offset[1]][(point[2] + offset[2])] = String.valueOf(counter);
 	}
 	
 	private int[] getAdjacentPoint(int[] currentPoint, int[] offset) {
@@ -91,41 +94,11 @@ public class PathTracerService {
 		return new int[] { currentPoint[0] + offset[0], currentPoint[1] + offset[1], currentPoint[2] + offset[2] };
 	}
 
-	private boolean isPossibleToMoveAdjacentPoint(String[][][] scheme, int[] node, int[] offset) {
-
-		return (scheme[node[0] + offset[0]][node[1] + offset[1]][node[2] + offset[2]].equals("."));
-	}
-
-	private boolean isFinishPoint(String[][][] scheme, int[] node, int[] offset) {
-
-		return (scheme[node[0] + offset[0]][node[1] + offset[1]][node[2] + offset[2]].equals("f"));
-	}
-
 	private boolean isNextStepOfWave(String[][][] scheme, int finishPointCoordinates[], int waveCounter, int counter,
 			int[] offset) {
 
 		return scheme[finishPointCoordinates[0] + offset[0]][finishPointCoordinates[1]
 				+ offset[1]][finishPointCoordinates[2] + offset[2]].equals(String.valueOf(waveCounter - counter));
-	}
-
-	private boolean isAdjacentPointExist(String[][][] scheme, int[] node, int[] offset) {
-		
-		if ((node[0] + offset[0]) < 0 || (node[0] + offset[0]) > scheme.length - 1) {
-			
-			return false;
-		}
-		
-		if ((node[1] + offset[1]) < 0 || (node[1] + offset[1]) > scheme[0].length - 1) {
-
-			return false;
-		}
-		
-		if ((node[2] + offset[2]) < 0 || (node[2] + offset[2]) > scheme[0][0].length - 1) {
-
-			return false;
-		}
-		
-		return true;
 	}
 
 	private void addNewPointToPath(List<int[]> path, int[] point, int[] offset) {
