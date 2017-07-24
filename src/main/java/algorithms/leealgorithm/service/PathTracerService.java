@@ -28,18 +28,22 @@ public class PathTracerService {
 
 	private static final Set<int[]> OFFSETS = new HashSet<int[]>(
 			Arrays.asList(OFFSET_Z_DOWN, OFFSET_Z_UP, OFFSET_X_LEFT, OFFSET_X_RIGHT, OFFSET_Y_UP, OFFSET_Y_DOWN));
-	
+
 	private LabyrinthService labyrinthService = new LabyrinthServiceImpl();
-	
-	private int waveCounter = 0;
+
+	private int waveCounter;
 
 	public List<int[]> getShortestPath(Labyrinth labyrinth) {
-		List<int[]> previousWavePoints = new ArrayList<int[]>();
-		
 		labyrinthService.setLabyrinth(labyrinth);
+		drawWaveFieldInLabyrinthScheme(labyrinth);
 
-		previousWavePoints.add(
-				new int[] { labyrinth.getStartingLevel(), labyrinth.getStartingRow(), labyrinth.getStartingColumn() });
+		return calculateShortestPath(labyrinth);
+	}
+
+	private void drawWaveFieldInLabyrinthScheme(Labyrinth labyrinth) {
+		List<int[]> previousWavePoints = new ArrayList<int[]>();
+
+		previousWavePoints.add(labyrinth.getStartingPoint());
 
 		do {
 			List<int[]> waveFrontPoints = new ArrayList<int[]>();
@@ -47,23 +51,23 @@ public class PathTracerService {
 				for (int[] offset : OFFSETS) {
 					if (labyrinthService.isFinishPoint(currentPoint, offset)) {
 
-						return buildShortestPath(labyrinth);
+						return;
 					}
 					if (labyrinthService.isPossibleToMoveAdjacentPoint(currentPoint, offset)) {
 						waveFrontPoints.add(getAdjacentPoint(currentPoint, offset));
 						setValueOfWaveCounterToScheme(labyrinth, currentPoint, offset, waveCounter);
-					} 
+					}
 				}
 			}
 			waveCounter++;
 			previousWavePoints = waveFrontPoints;
-			
+
 		} while (previousWavePoints.size() != 0);
 
-		return null;
+		throw new RuntimeException("There is no possible way to rich finish point");
 	}
 
-	private List<int[]> buildShortestPath(Labyrinth labyrinth) {
+	private List<int[]> calculateShortestPath(Labyrinth labyrinth) {
 		int counter = waveCounter - 1; // we get number of wave in adjacent cell
 		List<int[]> shortestPath = new ArrayList<int[]>();
 		int[] currentPoint = Arrays.copyOf(labyrinth.getFinishPoint(), labyrinth.getFinishPoint().length);
@@ -72,10 +76,9 @@ public class PathTracerService {
 			for (int[] offset : OFFSETS) {
 				if (labyrinthService.isAdjacentPointExist(currentPoint, offset)
 						&& isNextStepOfWave(labyrinth.getScheme(), currentPoint, counter, i, offset)) {
-
 					addNewPointToPath(shortestPath, currentPoint, offset);
 					currentPoint = getAdjacentPoint(currentPoint, offset);
-					
+
 					break;
 				}
 			}
@@ -84,10 +87,10 @@ public class PathTracerService {
 	}
 
 	private void setValueOfWaveCounterToScheme(Labyrinth labyrinth, int[] point, int[] offset, int counter) {
-
-		labyrinth.getScheme()[point[0] + offset[0]][point[1] + offset[1]][(point[2] + offset[2])] = String.valueOf(counter);
+		labyrinth.getScheme()[point[0] + offset[0]][point[1] + offset[1]][(point[2] + offset[2])] = String
+				.valueOf(counter);
 	}
-	
+
 	private int[] getAdjacentPoint(int[] currentPoint, int[] offset) {
 
 		return new int[] { currentPoint[0] + offset[0], currentPoint[1] + offset[1], currentPoint[2] + offset[2] };
@@ -101,7 +104,6 @@ public class PathTracerService {
 	}
 
 	private void addNewPointToPath(List<int[]> path, int[] point, int[] offset) {
-
 		path.add(new int[] { point[0] + offset[0], point[1] + offset[1], point[2] + offset[2] });
 	}
 }

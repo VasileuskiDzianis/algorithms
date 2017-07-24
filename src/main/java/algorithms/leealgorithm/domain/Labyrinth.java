@@ -6,12 +6,9 @@ public class Labyrinth {
 	private int[] startingPoint = new int[3];
 	private int[] finishPoint = new int[3];
 
-	//scheme parameters
 	private int levelsNum;
 	private int rowsNum;
 	private int columnsNum;
-
-	private int counter;
 
 	public int getLevelsNum() {
 		return levelsNum;
@@ -37,28 +34,12 @@ public class Labyrinth {
 		this.columnsNum = columnsNum;
 	}
 
-	public int getCounter() {
-		return counter;
-	}
-
 	public String[][][] getScheme() {
 		return scheme;
 	}
 
 	public void setScheme(String[][][] levels) {
 		this.scheme = levels;
-	}
-
-	public int getStartingLevel() {
-		return startingPoint[0];
-	}
-
-	public int getStartingRow() {
-		return startingPoint[1];
-	}
-
-	public int getStartingColumn() {
-		return startingPoint[2];
 	}
 
 	public int[] getStartingPoint() {
@@ -76,7 +57,4 @@ public class Labyrinth {
 	public void setFinishPoint(int[] finishPoint) {
 		this.finishPoint = finishPoint;
 	}
-	
-	
-
 }
