@@ -43,14 +43,15 @@ public class LabyrinthDao {
 				// lines
 				for (int k = 0; k < labyrinth.getColumnsNum(); k++) {
 					if (line.charAt(k) == '1') {
-						labyrinth.setStartingColumn(k);
-						labyrinth.setStartingRow(j);
-						labyrinth.setStartingLevel(i);
+						labyrinth.setStartingPoint(new int[]{i, j, k});
+						
 						scheme[i][j][k] = "s"; // we use s - start because we
 												// are going to use "Lee
 												// Algorithm"
 					} else if (line.charAt(k) == '2') {
 						scheme[i][j][k] = "f"; // f - finish point
+						labyrinth.setFinishPoint(new int[]{i, j, k});
+						
 					} else {
 						scheme[i][j][k] = String.valueOf(line.charAt(k));
 					}

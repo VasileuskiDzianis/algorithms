@@ -59,20 +59,16 @@ public class PathTracerServiceTest {
 		labyrinth1.setColumnsNum(4);
 		labyrinth1.setRowsNum(4);
 		labyrinth1.setLevelsNum(2);
-		labyrinth1.setStartingLevel(0);
-		labyrinth1.setStartingRow(2);
-		labyrinth1.setStartingColumn(3);
+		labyrinth1.setStartingPoint(new int[]{0, 2, 3});
+		labyrinth1.setFinishPoint(new int[]{1, 3, 1});
 		
 		labyrinth2 = new Labyrinth();
 		labyrinth2.setScheme(labyrinthFromTask);
 		labyrinth2.setColumnsNum(3);
 		labyrinth2.setRowsNum(3);
 		labyrinth2.setLevelsNum(3);
-		labyrinth2.setStartingLevel(0);
-		labyrinth2.setStartingRow(0);
-		labyrinth2.setStartingColumn(0);
-		
-		
+		labyrinth2.setStartingPoint(new int[]{0, 0, 0});
+		labyrinth2.setFinishPoint(new int[]{2, 2, 2});
 	}
 	
 	

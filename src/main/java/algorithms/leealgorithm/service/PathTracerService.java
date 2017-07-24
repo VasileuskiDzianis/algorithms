@@ -30,10 +30,11 @@ public class PathTracerService {
 			Arrays.asList(OFFSET_Z_DOWN, OFFSET_Z_UP, OFFSET_X_LEFT, OFFSET_X_RIGHT, OFFSET_Y_UP, OFFSET_Y_DOWN));
 	
 	private LabyrinthService labyrinthService = new LabyrinthServiceImpl();
+	
+	private int waveCounter = 0;
 
 	public List<int[]> getShortestPath(Labyrinth labyrinth) {
 		List<int[]> previousWavePoints = new ArrayList<int[]>();
-		int waveCounter = 0;
 		
 		labyrinthService.setLabyrinth(labyrinth);
 
@@ -44,13 +45,11 @@ public class PathTracerService {
 			List<int[]> waveFrontPoints = new ArrayList<int[]>();
 			for (int[] currentPoint : previousWavePoints) {
 				for (int[] offset : OFFSETS) {
-					
 					if (labyrinthService.isFinishPoint(currentPoint, offset)) {
 
-						return buildShortestPath(waveCounter, getAdjacentPoint(currentPoint, offset), labyrinth);
+						return buildShortestPath(labyrinth);
 					}
 					if (labyrinthService.isPossibleToMoveAdjacentPoint(currentPoint, offset)) {
-
 						waveFrontPoints.add(getAdjacentPoint(currentPoint, offset));
 						setValueOfWaveCounterToScheme(labyrinth, currentPoint, offset, waveCounter);
 					} 
@@ -64,10 +63,10 @@ public class PathTracerService {
 		return null;
 	}
 
-	private List<int[]> buildShortestPath(int waveCounter, int[] finishPoint, Labyrinth labyrinth) {
+	private List<int[]> buildShortestPath(Labyrinth labyrinth) {
 		int counter = waveCounter - 1; // we get number of wave in adjacent cell
 		List<int[]> shortestPath = new ArrayList<int[]>();
-		int[] currentPoint = Arrays.copyOf(finishPoint, finishPoint.length);
+		int[] currentPoint = Arrays.copyOf(labyrinth.getFinishPoint(), labyrinth.getFinishPoint().length);
 
 		for (int i = 0; i <= (counter); i++) {
 			for (int[] offset : OFFSETS) {

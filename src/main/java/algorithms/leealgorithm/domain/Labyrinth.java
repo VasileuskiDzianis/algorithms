@@ -3,11 +3,8 @@ package algorithms.leealgorithm.domain;
 public class Labyrinth {
 
 	private String[][][] scheme;
-
-	//starting point
-	private int startingLevel;
-	private int startingRow;
-	private int startingColumn;
+	private int[] startingPoint = new int[3];
+	private int[] finishPoint = new int[3];
 
 	//scheme parameters
 	private int levelsNum;
@@ -53,27 +50,33 @@ public class Labyrinth {
 	}
 
 	public int getStartingLevel() {
-		return startingLevel;
-	}
-
-	public void setStartingLevel(int startingLevel) {
-		this.startingLevel = startingLevel;
+		return startingPoint[0];
 	}
 
 	public int getStartingRow() {
-		return startingRow;
-	}
-
-	public void setStartingRow(int startingRow) {
-		this.startingRow = startingRow;
+		return startingPoint[1];
 	}
 
 	public int getStartingColumn() {
-		return startingColumn;
+		return startingPoint[2];
 	}
 
-	public void setStartingColumn(int startingColumn) {
-		this.startingColumn = startingColumn;
+	public int[] getStartingPoint() {
+		return startingPoint;
 	}
+
+	public void setStartingPoint(int[] startingPoint) {
+		this.startingPoint = startingPoint;
+	}
+
+	public int[] getFinishPoint() {
+		return finishPoint;
+	}
+
+	public void setFinishPoint(int[] finishPoint) {
+		this.finishPoint = finishPoint;
+	}
+	
+	
 
 }
